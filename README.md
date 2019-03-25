@@ -1,1 +1,1 @@
-# HS_SCA1
+# Hardware Security: Side-Channel Analysis Assignment 1
