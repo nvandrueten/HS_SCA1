@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from scipy.io import loadmat
+from scipy import signal
 import numpy as np
 
 # Made by:
@@ -43,10 +44,17 @@ def construct_pow_pred_matrix(val_pred_matrix, key_len):
 			output[i][k] = hw(val)
 	return output
 
-
-def print_r(ndarray):
-	for i in range(len(ndarray)):
-		print(ndarray[i])
+# Uses the correlate function of the scipy io library,
+# that cross-correlates two matrices.
+def correlate_m(matrix1, matrix2):
+	cols_matrix1 = matrix1.shape[1]
+	cols_matrix2 = matrix2.shape[1]
+	for i in range(cols_matrix1):
+		for j in range(cols_matrix2):
+			col1 = matrix1[:,[i]]
+			col2 = matrix2[:,[j]]
+			#correlation = signal.correlate(col1, col2)
+			#print(correlation)
 
 # Opens "in.mat" file.
 in_file = loadmat('in.mat')
@@ -60,3 +68,6 @@ print("Power prediction matrix: \n {}".format(pow_pred_matrix))
 # Opens "traces.mat" file.
 trace_file = loadmat('traces.mat')
 _traces = trace_file['traces']
+
+correlation = correlate_m(pow_pred_matrix, _traces)
+print(correlation)
