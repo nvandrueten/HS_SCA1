@@ -12,6 +12,8 @@ SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x
 def f(_in, k):
 	return SBox[_in ^ k]
 
+def hw(val):
+	return bin(val).count("1")
 
 # Returns a Value-Prediction Matrix of size [no_inputs x no_keys]
 # Input _in: Input matrix variable of size [no_inputs]
@@ -24,6 +26,17 @@ def construct_val_pred_matrix(_in, key_len):
 			output[i][k] = val
 	return output	
 	
+
+def construct_pow_pred_matrix(val_pred_matrix, key_len):
+	output = np.zeros((len(_in), 2**key_len), dtype="uint8")
+	for i in range(len(_in)):
+		in_elem = _in[i][0]
+		for k in range(2**key_len):
+			val = val_pred_matrix[i][k]
+			output[i][k] = hw(val)
+	return output
+
+
 def print_r(ndarray):
 	for i in range(len(ndarray)):
 		print(ndarray[i])
@@ -33,6 +46,8 @@ _in = matlab_file['in']
 
 
 val_pred_matrix = construct_val_pred_matrix(_in, 4)
-
 print(val_pred_matrix)
- 
+pow_pred_matrix = construct_pow_pred_matrix(val_pred_matrix, 4)
+print(pow_pred_matrix)
+
+
