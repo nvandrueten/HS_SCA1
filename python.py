@@ -2,6 +2,12 @@
 from scipy.io import loadmat
 import numpy as np
 
+# Made by:
+# Name			Studentnumber
+# Niels van den Hork
+# Niels van Drueten	s4496604
+
+
 # PRESENT Cipher SBox
 SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x1, 0x2]
 
@@ -26,7 +32,8 @@ def construct_val_pred_matrix(_in, key_len):
 			output[i][k] = val
 	return output	
 	
-
+# Returns a Power-Prediction Matrix of size [no_inputs x no_keys]
+# Input _in: Value-Prediction Matrix of size [no_inputs x no_keys]
 def construct_pow_pred_matrix(val_pred_matrix, key_len):
 	output = np.zeros((len(_in), 2**key_len), dtype="uint8")
 	for i in range(len(_in)):
@@ -41,13 +48,15 @@ def print_r(ndarray):
 	for i in range(len(ndarray)):
 		print(ndarray[i])
 
-matlab_file = loadmat('in.mat')
-_in = matlab_file['in']
-
+# Opens "in.mat" file.
+in_file = loadmat('in.mat')
+_in = in_file['in']
 
 val_pred_matrix = construct_val_pred_matrix(_in, 4)
-print(val_pred_matrix)
+print("Value prediction matrix: \n {}".format(val_pred_matrix))
 pow_pred_matrix = construct_pow_pred_matrix(val_pred_matrix, 4)
-print(pow_pred_matrix)
+print("Power prediction matrix: \n {}".format(pow_pred_matrix))
 
-
+# Opens "traces.mat" file.
+trace_file = loadmat('traces.mat')
+_traces = trace_file['traces']
