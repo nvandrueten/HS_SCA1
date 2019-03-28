@@ -66,8 +66,8 @@ def correlate_m(matrix1, matrix2):
 		correlation = signal.correlate(col1, col2)
 		correlations.append(correlation)
 	else:
-		for i in range(cols_matris1):
-			for j in range(cols_matris2):
+		for i in range(cols_matrix1):
+			for j in range(cols_matrix2):
 				col1 = matrix1[:,[i]]
 				col2 = matrix2[:,[j]]
 				correlation = signal.correlate(col1, col2)
