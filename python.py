@@ -2,12 +2,18 @@
 from scipy.io import loadmat
 from scipy import signal
 import numpy as np
+import json
 
 # Made by:
 # Name			Studentnumber
 # Niels van den Hork
 # Niels van Drueten	s4496604
 
+# Boolean to load correlation from file.
+get_correlation_from_file = False
+
+# Filename to store/load correlation matrix.
+filename = "correlations.txt"
 
 # PRESENT Cipher SBox
 SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x1, 0x2]
@@ -49,25 +55,65 @@ def construct_pow_pred_matrix(val_pred_matrix, key_len):
 def correlate_m(matrix1, matrix2):
 	cols_matrix1 = matrix1.shape[1]
 	cols_matrix2 = matrix2.shape[1]
+	correlations = []
+	# Debug lines
+#	col1 = matrix1[:,[0]]
+#	col2 = matrix2[:,[0]]
+#	correlation = signal.correlate(col1, col2)
+#	correlations.append(correlation)
 	for i in range(cols_matrix1):
 		for j in range(cols_matrix2):
 			col1 = matrix1[:,[i]]
 			col2 = matrix2[:,[j]]
-			#correlation = signal.correlate(col1, col2)
-			#print(correlation)
+			correlation = signal.correlate(col1, col2)
+			correlations.append(correlation)
+			if j % 100 == 0:
+				print("{} \t {}".format(i,j))
+	store_matrix(correlations)
+	return correlations
+
+
+# Storing the correlation matrix.
+def store_matrix(matrix):
+	print(json.dumps(matrix))
+
+def load_matrix():
+	return []
+
+def sort_correlation(correlation):
+	return correlation.sort()
 
 # Opens "in.mat" file.
 in_file = loadmat('in.mat')
 _in = in_file['in']
 
+# Computing value prediction matrix
 val_pred_matrix = construct_val_pred_matrix(_in, 4)
 print("Value prediction matrix: \n {}".format(val_pred_matrix))
+# Computing power prediction matrix
 pow_pred_matrix = construct_pow_pred_matrix(val_pred_matrix, 4)
 print("Power prediction matrix: \n {}".format(pow_pred_matrix))
 
 # Opens "traces.mat" file.
 trace_file = loadmat('traces.mat')
 _traces = trace_file['traces']
+print("Traces matrix: \n {}".format(_traces))
 
-correlation = correlate_m(pow_pred_matrix, _traces)
+# Computing correlation matrix
+correlation = []
+if get_correlation_from_file:
+	print("Getting correlation matrix from file.");
+	correlation = load_matrix()
+else:
+	print("Computing correlation matrix.");
+	correlation = correlate_m(pow_pred_matrix, _traces)
 print(correlation)
+
+
+# Sort correlation matrix
+sorted_correlation = sort_correlation(correlation)
+print("sorted: {}".format(sorted_correlation))
+
+# Create graphs
+
+
