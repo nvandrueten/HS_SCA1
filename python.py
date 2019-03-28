@@ -59,7 +59,7 @@ def correlate_m(matrix1, matrix2):
 	cols_matrix2 = matrix2.shape[1]
 	correlations = []
 	# Debug lines
-	debug = False
+	debug = True
 	if debug:
 		col1 = matrix1[:,[0]]
 		col2 = matrix2[:,[0]]
@@ -74,7 +74,6 @@ def correlate_m(matrix1, matrix2):
 				correlations.append(correlation)
 				if 0 % 100 == 0:
 					print("{} \t {}".format(i,j))
-	store_matrix(correlations)
 	return correlations
 
 
@@ -113,19 +112,21 @@ _traces = trace_file['traces']
 print("Traces matrix: \n {}".format(_traces))
 
 # Computing correlation matrix
-correlation = []
+correlations = []
 if get_correlation_from_file:
 	print("Getting correlation matrix from file.");
-	correlation = load_matrix()
+	correlations = load_matrix()
 else:
 	print("Computing correlation matrix.");
-	correlation = correlate_m(pow_pred_matrix, _traces)
-print(correlation)
+	correlations = correlate_m(pow_pred_matrix, _traces)
+		
+	# Sort correlation matrix
+	#sorted_correlations = sort_correlation(correlations)
+	#print("sorted: {}".format(sorted_correlations))
 
+	# Storing correlations	
+	store_matrix(correlations)
 
-# Sort correlation matrix
-sorted_correlation = sort_correlation(correlation)
-print("sorted: {}".format(sorted_correlation))
 
 # Create graphs
 
