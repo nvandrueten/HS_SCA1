@@ -13,7 +13,8 @@ import json
 get_correlation_from_file = False
 
 # Filename to store/load correlation matrix.
-filename = "correlations.txt"
+filename = "correlations.json"
+
 
 # PRESENT Cipher SBox
 SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x1, 0x2]
@@ -22,9 +23,10 @@ SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x
 # Function f is the intermediate result,
 # where _in is the known non-constant data value
 # and k is a small part of the key.
-def f(_in, k):
-	return SBox[_in ^ k]
+def f(i, k):
+	return SBox[i ^ k]
 
+# Returns the Hamming Weight of val.
 def hw(val):
 	return bin(val).count("1")
 
@@ -57,25 +59,36 @@ def correlate_m(matrix1, matrix2):
 	cols_matrix2 = matrix2.shape[1]
 	correlations = []
 	# Debug lines
-#	col1 = matrix1[:,[0]]
-#	col2 = matrix2[:,[0]]
-#	correlation = signal.correlate(col1, col2)
-#	correlations.append(correlation)
-	for i in range(cols_matrix1):
-		for j in range(cols_matrix2):
-			col1 = matrix1[:,[i]]
-			col2 = matrix2[:,[j]]
-			correlation = signal.correlate(col1, col2)
-			correlations.append(correlation)
-			if j % 100 == 0:
-				print("{} \t {}".format(i,j))
+	debug = False
+	if debug:
+		col1 = matrix1[:,[0]]
+		col2 = matrix2[:,[0]]
+		correlation = signal.correlate(col1, col2)
+		correlations.append(correlation)
+	else:
+		for i in range(cols_matris1):
+			for j in range(cols_matris2):
+				col1 = matrix1[:,[i]]
+				col2 = matrix2[:,[j]]
+				correlation = signal.correlate(col1, col2)
+				correlations.append(correlation)
+				if 0 % 100 == 0:
+					print("{} \t {}".format(i,j))
 	store_matrix(correlations)
 	return correlations
 
 
-# Storing the correlation matrix.
+# Storing the correlation matrix in json.
 def store_matrix(matrix):
-	print(json.dumps(matrix))
+	#matrix_list = matrix.tolist()
+	json_string = ""
+	for element in matrix:
+		json_string += json.dumps(element.tolist())
+	print(json_string)
+	with open(filename, 'w') as outfile:
+		json.dump(json_string, outfile)
+	print("Correlation matrix stored in: {}".format(filename))
+
 
 def load_matrix():
 	return []
