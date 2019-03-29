@@ -21,7 +21,7 @@ SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x
 
 
 # Function f is the intermediate result,
-# where _in is the known non-constant data value
+# where i is the known non-constant data value
 # and k is a small part of the key.
 def f(i, k):
 	return SBox[i ^ k]
