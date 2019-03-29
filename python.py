@@ -61,6 +61,7 @@ def correlate_m(matrix1, matrix2):
 	# Debug lines
 	debug = True
 	if debug:
+		# Do 1 correlation
 		col1 = matrix1[:,[0]]
 		col2 = matrix2[:,[0]]
 		correlation = signal.correlate(col1, col2)
