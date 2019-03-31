@@ -17,10 +17,6 @@ from scipy.stats.stats import pearsonr
 # Niels van Drueten 	s4496604
 
 
-# Filename to store/load correlation matrix.
-filename = "correlations.json"
-
-
 # PRESENT Cipher SBox
 SBox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD, 0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x1, 0x2]
 
@@ -62,7 +58,7 @@ def construct_pow_pred_matrix(_in, val_pred_matrix, key_len):
 # Uses the person correlate function
 # that cross-correlates two matrices.
 def correlate_m(matrix1, matrix2):
-    print(matrix1.shape,matrix2.shape)
+    print("Computing correlation matrix of 2 matrices with size {} and {}".format(matrix1.shape,matrix2.shape))
    
     cols_matrix1 = matrix1.shape[1]
     cols_matrix2 = matrix2.shape[1]
@@ -101,40 +97,45 @@ def main():
 	# Computing power prediction matrix
 	pow_pred_matrix = construct_pow_pred_matrix(_in, val_pred_matrix, 4)
 	print("Power prediction matrix: \n {} \nSize: {}".format(pow_pred_matrix, pow_pred_matrix.shape))
-	plt.figure(1)
-	plt.plot(pow_pred_matrix[:,0])
+	#plt.figure(1)
+	#plt.plot(pow_pred_matrix[:,0])
 
 
 	# Opens "traces.mat" file.
 	trace_file = loadmat('traces.mat')
 	_traces = trace_file['traces']
 	print("Traces matrix: \n {} \nSize: {}".format(_traces, _traces.shape))
-	plt.figure(2)
-	plt.plot(_traces[0])
+	#plt.figure(2)
+	#plt.plot(_traces[0])
 
 
-	# Computing correlation matrix
-	result = correlate_m(pow_pred_matrix, _traces)
-	print(result.shape)   
-
+	# Computing correlation matrix nr_of_traces x nr_of_keys
+	correlation_matrix = correlate_m(pow_pred_matrix, _traces)
+	print("Correlation matrix: \n {} \nSize: {}".format(correlation_matrix, correlation_matrix.shape))
+	print(correlation_matrix[0])
 	# Sort correlation matrix
-	#sorted_correlations = sort_correlation(correlations)
-	#print("sorted: {}".format(sorted_correlations))
+	#sorted_correlations = sort_correlation(correlation_matrix)
+	#print("sorted: {} \nSize: {}".format(sorted_correlations, sorted_correlations.shape))
 
-
-	for row in result:
+	# Plotting correlation matrix
+	for row in correlation_matrix:
 		plt.plot(row)
+	plt.figure(1)
+	plt.show()
 
-
-	for row in result:
+	# Plotting sorted correlation matrix
+	for row in correlation_matrix:
 		row = row.sort()
-	print(result[0][:-2])
-	for row in result:
+	for row in correlation_matrix:
 		plt.plot(row)
+	plt.figure(2)
+	plt.show()
 
+	# Best key candidate 
+	print(correlation_matrix[0][:-2])
 
-	plt.hist(result[0])
-	#plt.figure(3)
+	plt.hist(correlation_matrix[0])
+	plt.figure(3)
 	plt.show()
 
 if __name__== "__main__":
